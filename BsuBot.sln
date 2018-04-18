@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.27428.2037
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BsuBot", "BsuBot\BsuBot.csproj", "{B24182F0-42DA-443D-BA3F-5AF9B432AD59}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B24182F0-42DA-443D-BA3F-5AF9B432AD59}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B24182F0-42DA-443D-BA3F-5AF9B432AD59}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B24182F0-42DA-443D-BA3F-5AF9B432AD59}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B24182F0-42DA-443D-BA3F-5AF9B432AD59}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {EB8F6090-D60B-4AC8-81FF-D3C2C6FEF1E4}
+	EndGlobalSection
+EndGlobal
