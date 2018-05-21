@@ -55,6 +55,28 @@ namespace BsuBot
 
                     await Conversation.SendAsync(activity, () => new Dialogs.RootDialog());
                 }
+                else if (activity.Type == ActivityTypes.ConversationUpdate)
+                {
+
+                    //start if just joined
+                    if (activity.MembersAdded.Count == 1)
+                    {
+                        // var act = activity.AsMessageActivity();
+                        /* using (var scope = DialogModule.BeginLifetimeScope(this.scope, act))
+                         {
+                            var _rootDialog = scope.Resolve<RootDialog>();*/
+
+
+
+                        await Conversation.SendAsync(activity,
+                            () => new RootDialog());
+                        return new HttpResponseMessage(HttpStatusCode.Accepted);
+                        /*}*/
+                    }
+                    // Handle conversation state changes, like members being added and removed
+                    // Use Activity.MembersAdded and Activity.MembersRemoved and Activity.Action for info
+                    // Not available in all channels
+                }
                 else
                 {
                     HandleSystemMessage(activity);
