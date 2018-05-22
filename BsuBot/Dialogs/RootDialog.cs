@@ -23,12 +23,11 @@ namespace BsuBot.Dialogs
             "Loaner Laptop"
         };*/
 
-        private readonly List<string> _mainMenuTexts = new List<string>
-        {
-            "AGI Information",
+        private readonly List<string> _mainMenuOptions = new List<string>
+        {  "AGI Information",
             "Office Locations",
             "Office hours",
-            "Please type in a question related to Above Guideline Increase (AGI)",
+           "Please type in a question related to Above Guideline Increase (AGI)",
         };
 
 
@@ -75,7 +74,7 @@ namespace BsuBot.Dialogs
         {
             /* await context.PostWithButtonsAsync(MainMenuInitText, _mainMenuTexts); */
             await context.PostAsync(
-                "Welcome to our chat application. Please note that this application is for testing purpose only");
+                "Welcome to our chat application. Please note that this application is for testing purpose only. You can type **menu** anywhere to get to main menu.");
             await AskLandLordOrTenant(context);
         }
 
@@ -103,6 +102,7 @@ namespace BsuBot.Dialogs
                 default:
                     await context.PostAsync("Not recognized");
                     context.Done(1);
+                    return;
                     break;
 
             }
@@ -124,7 +124,7 @@ namespace BsuBot.Dialogs
         {
             if (await result)
             {
-                await context.PostWithButtonsAsync("Thank you! Please select an option from the menu below", _mainMenuTexts);
+                await context.PostWithButtonsAsync("Thank you! Please select an option from the menu below", _mainMenuOptions);
                 context.Wait(AfterSelectMainMenuOption);
             }
             else
@@ -141,6 +141,7 @@ namespace BsuBot.Dialogs
                 //todo: try pattern matching
                 case "AGI Information":
                     await context.PostAsync("<place for any random answer here :) >");
+                    context.Wait(AfterSelectMainMenuOption);
                     break;
                 case "Office Locations":
                     var str =
@@ -149,13 +150,15 @@ namespace BsuBot.Dialogs
                         "**Toronto North Office** \r\n333 Cheppard Venue East, Suite 80000\r\nToronto, Ontario M1M 5B9 \r\nFax: 777-333-4444 or 1-888-444-444\r\n<br>" +
                         "**Toronto South Office** \r\n7777 St. Blair Venue Wast, Suite 11111\r\nToronto, Ontario M1M 5B9 \r\nFax: 777-333-4444 or 1-888-444-444\r\n";
                     await context.PostAsync(str);
+                    context.Wait(AfterSelectMainMenuOption);
                     break;
                 case "Office hours":
                     await context.PostAsync("LTA offices are open from 08:30 to 04:00 PM from Monday to Friday");
+                    context.Wait(AfterSelectMainMenuOption);
                     break;
                 case "Please type in a question related to Above Guideline Increase (AGI)":
                     await context.PostAsync("QNA will be here");
-                   
+                    context.Wait(AfterSelectMainMenuOption);
                     break;
             }
         }
