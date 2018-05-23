@@ -36,6 +36,7 @@ namespace BsuBot
                         builder.RegisterWebApiFilterProvider(config);
 
                         builder.RegisterType<RootDialog>().AsSelf().InstancePerDependency();
+                        builder.RegisterType<QnaDialog>().AsSelf().InstancePerDependency();
 
                     });
 
