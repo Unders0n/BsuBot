@@ -38,6 +38,7 @@ namespace BsuBot.Extensions
                     Type = "imBack",
                     Value = buttonCapture,
                     Title = buttonCapture
+                  
                 };
                 buttonsCards.Add(button);
             }

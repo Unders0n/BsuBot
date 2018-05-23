@@ -35,9 +35,9 @@ namespace BsuBot.Dialogs
         private readonly List<string> _mainMenuOptions = new List<string>
         {
            // "AGI Information",
-            "Office Locations",
-            "Office hours",
-            "Ask question related to AGI Guideline"
+            "1) Office Locations",
+            "2) Office hours",
+            "3) Ask question related to AGI Guideline"
         };
 
         private string name;
@@ -117,7 +117,7 @@ namespace BsuBot.Dialogs
 
         private async Task ShowMainMenu(IDialogContext context)
         {
-            await context.PostWithButtonsAsync("Thank you! Please select an option from the menu below", _mainMenuOptions);
+            await context.PostWithButtonsAsync("Thank you! Please select an option from the menu below (type number if in SMS)", _mainMenuOptions);
             context.Wait(AfterSelectMainMenuOption);
         }
 
@@ -127,11 +127,13 @@ namespace BsuBot.Dialogs
             switch (res.Text)
             {
                 //todo: try pattern matching
-                case "AGI Information":
+                /*case "1) AGI Information":
+                case "1":
                     await context.PostAsync("place for any random answer here :) ");
                     context.Wait(AfterSelectMainMenuOption);
-                    break;
-                case "Office Locations":
+                    break;*/
+                case "1) Office Locations":
+                case "1":
                     var str =
                         "**Sud Office** 999 Farch Street, Suite 333\r\nSudbury, Ontario M1M 5B9\r\nFax: 777-333-4444 or 1-888-444-444\r\n\r\n" +
                         "**Toronto East Office** \r\n2222 Nidland Venue, Unit 22222\r\nToronto, Ontario M1M 5B9 \r\nFax: 777-333-4444 or 1-888-444-444\r\n\r\n" +
@@ -140,11 +142,13 @@ namespace BsuBot.Dialogs
                     await context.PostAsync(str);
                     context.Wait(AfterSelectMainMenuOption);
                     break;
-                case "Office hours":
+                case "2) Office hours":
+                case "2":
                     await context.PostAsync("LTA offices are open from 08:30 to 04:00 PM from Monday to Friday");
                     context.Wait(AfterSelectMainMenuOption);
                     break;
-                case "Ask question related to AGI Guideline":
+                case "3) Ask question related to AGI Guideline":
+                case "3":
                     context.Call(new ExceptionHandlerDialog<object>(_qnaDialog, true),
                         ResumeAfterQna);
                     break;
