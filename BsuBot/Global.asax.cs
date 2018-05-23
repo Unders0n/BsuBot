@@ -57,6 +57,9 @@ namespace BsuBot
                     // Register your Web API controllers.
 
                 });
+
+                logger.Info("Service successfully started.");
+
             }
             catch (Exception e)
             {

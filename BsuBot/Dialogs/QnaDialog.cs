@@ -16,6 +16,11 @@ namespace BsuBot.Dialogs
     
     public class QnaDialog : IDialog<object>
     {
+        public QnaDialog()
+        {
+
+        }
+
 
         public class QnAMakerResult
         {
@@ -36,18 +41,31 @@ namespace BsuBot.Dialogs
         }
 
 
-        public Task StartAsync(IDialogContext context)
+        public async Task StartAsync(IDialogContext context)
         {
-            context.Wait(QuestionReceivedAsync);
+            await AskToAskQuestion(context);
 
-            return Task.CompletedTask;
+            // return Task.CompletedTask;
+        }
+
+        private async Task AskToAskQuestion(IDialogContext context)
+        {
+            await context.PostAsync("please type in your question or type **exit** to go back to menu");
+            context.Wait(QuestionReceivedAsync);
         }
 
         private async Task QuestionReceivedAsync(IDialogContext context, IAwaitable<object> result)
         {
             var activity = await result as Activity;
 
+            if (activity.Text.ToLower() == "exit")
+            {
+                context.Done(1);
+                return;
+            }
+
             await context.PostAsync(GetAnswer(activity.Text));
+            await AskToAskQuestion(context);
         }
 
         private string GetAnswer(string query)
@@ -70,7 +88,8 @@ namespace BsuBot.Dialogs
 
                 //Add the subscription key header  
                 var qnamakerSubscriptionKey = Convert.ToString(ConfigurationManager.AppSettings["SUBSCRIPTION_KEY"], CultureInfo.InvariantCulture);
-                client.Headers.Add("Ocp-Apim-Subscription-Key", qnamakerSubscriptionKey);
+                // client.Headers.Add("Ocp-Apim-Subscription-Key", qnamakerSubscriptionKey);
+                client.Headers.Add("Authorization", $"EndpointKey {qnamakerSubscriptionKey}");
                 client.Headers.Add("Content-Type", "application/json");
                 responseString = client.UploadString(builder.Uri, postBody);
             }

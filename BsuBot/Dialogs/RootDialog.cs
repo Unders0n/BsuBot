@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using BsuBot.Extensions;
 using Microsoft.Bot.Builder.Dialogs;
+using Microsoft.Bot.Builder.Internals.Fibers;
 using Microsoft.Bot.Connector;
 
 namespace BsuBot.Dialogs
@@ -10,6 +12,8 @@ namespace BsuBot.Dialogs
     [Serializable]
     public class RootDialog : IDialog<object>
     {
+        private QnaDialog _qnaDialog;
+
         private const string NotReadyYetText = "Not ready yet";
 
         private const string MainMenuInitText = "Hello\r\nPlease select your request from the menu below\r\n";
@@ -23,11 +27,17 @@ namespace BsuBot.Dialogs
             "Loaner Laptop"
         };*/
 
+        public RootDialog(QnaDialog qnaDialog)
+        {
+            SetField.NotNull(out _qnaDialog, nameof(_qnaDialog), qnaDialog);
+        }
+
         private readonly List<string> _mainMenuOptions = new List<string>
-        {  //"AGI Information",
+        {
+           // "AGI Information",
             "Office Locations",
             "Office hours",
-             "Please type in a question related to Above Guideline Increase AGI"
+            "Ask question related to AGI Guideline"
         };
 
         private string name;
@@ -44,8 +54,12 @@ namespace BsuBot.Dialogs
             /* await context.PostWithButtonsAsync(MainMenuInitText, _mainMenuTexts); */
             await context.PostAsync(
                 "Welcome to our chat application. Please note that this application is for testing purpose only. You can type **menu** anywhere to get to main menu.");
-            await AskLandLordOrTenant(context);
+             await AskLandLordOrTenant(context);
+
+            
         }
+
+       
 
         private async Task AskLandLordOrTenant(IDialogContext context)
         {
@@ -93,13 +107,18 @@ namespace BsuBot.Dialogs
         {
             if (await result)
             {
-                 await context.PostWithButtonsAsync("Thank you! Please select an option from the menu below", _mainMenuOptions);
-                context.Wait(AfterSelectMainMenuOption);
+                await ShowMainMenu(context);
             }
             else
             {
                 await AskLandLordOrTenant(context);
             }
+        }
+
+        private async Task ShowMainMenu(IDialogContext context)
+        {
+            await context.PostWithButtonsAsync("Thank you! Please select an option from the menu below", _mainMenuOptions);
+            context.Wait(AfterSelectMainMenuOption);
         }
 
         private async Task AfterSelectMainMenuOption(IDialogContext context, IAwaitable<IMessageActivity> result)
@@ -114,9 +133,9 @@ namespace BsuBot.Dialogs
                     break;
                 case "Office Locations":
                     var str =
-                        "**Sud Office** 999 Farch Street, Suite 333\r\nSudbury, Ontario M1M 5B9\r\nFax: 777-333-4444 or 1-888-444-444\r\n" +
-                        "**Toronto East Office** \r\n2222 Nidland Venue, Unit 22222\r\nToronto, Ontario M1M 5B9 \r\nFax: 777-333-4444 or 1-888-444-444\r\n" +
-                        "**Toronto North Office** \r\n333 Cheppard Venue East, Suite 80000\r\nToronto, Ontario M1M 5B9 \r\nFax: 777-333-4444 or 1-888-444-444\r\n" +
+                        "**Sud Office** 999 Farch Street, Suite 333\r\nSudbury, Ontario M1M 5B9\r\nFax: 777-333-4444 or 1-888-444-444\r\n\r\n" +
+                        "**Toronto East Office** \r\n2222 Nidland Venue, Unit 22222\r\nToronto, Ontario M1M 5B9 \r\nFax: 777-333-4444 or 1-888-444-444\r\n\r\n" +
+                        "**Toronto North Office** \r\n333 Cheppard Venue East, Suite 80000\r\nToronto, Ontario M1M 5B9 \r\nFax: 777-333-4444 or 1-888-444-444\r\n\r\n" +
                         "**Toronto South Office** \r\n7777 St. Blair Venue Wast, Suite 11111\r\nToronto, Ontario M1M 5B9 \r\nFax: 777-333-4444 or 1-888-444-444\r\n";
                     await context.PostAsync(str);
                     context.Wait(AfterSelectMainMenuOption);
@@ -125,12 +144,22 @@ namespace BsuBot.Dialogs
                     await context.PostAsync("LTA offices are open from 08:30 to 04:00 PM from Monday to Friday");
                     context.Wait(AfterSelectMainMenuOption);
                     break;
-                case "Please type in a question related to Above Guideline Increase AGI":
-                    await context.PostAsync("QNA will be here");
-                    context.Wait(AfterSelectMainMenuOption);
+                case "Ask question related to AGI Guideline":
+                    context.Call(new ExceptionHandlerDialog<object>(_qnaDialog, true),
+                        ResumeAfterQna);
+                    break;
+                default:
+                    await context.PostAsync("can't recognize");
+                    await ShowMainMenu(context);
                     break;
             }
         }
-     
+
+        private async Task ResumeAfterQna(IDialogContext context, IAwaitable<object> result)
+        {
+            await ShowMainMenu(context);
+           
+        }
+
     }
 }
