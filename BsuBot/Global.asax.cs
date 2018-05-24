@@ -9,7 +9,10 @@ using Autofac;
 using Autofac.Integration.WebApi;
 using BsuBot.Dialogs;
 using BsuBot.Logger;
+using Microsoft.Bot.Builder.Azure;
 using Microsoft.Bot.Builder.Dialogs;
+using Microsoft.Bot.Builder.Dialogs.Internals;
+using Microsoft.Bot.Connector;
 using NLog;
 
 namespace BsuBot
@@ -38,6 +41,15 @@ namespace BsuBot
                         builder.RegisterType<RootDialog>().AsSelf().InstancePerDependency();
                         builder.RegisterType<QnaDialog>().AsSelf().InstancePerDependency();
 
+                        //BOT Data storage
+                        builder.RegisterModule(new AzureModule(Assembly.GetExecutingAssembly()));
+
+                        var store = new InMemoryDataStore();
+
+                        builder.Register(c => store)
+                            .Keyed<IBotDataStore<BotData>>(AzureModule.Key_DataStore)
+                            .AsSelf()
+                            .SingleInstance();
                     });
 
                 // Set the dependency resolver to be Autofac.

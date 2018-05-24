@@ -46,7 +46,11 @@ namespace BsuBot.Dialogs
 
         public async Task StartAsync(IDialogContext context)
         {
-            context.Wait(MessageReceivedAsync);
+             context.Wait(MessageReceivedAsync);
+            // return Task.CompletedTask;
+            /*await context.PostAsync(
+                "Welcome to our chat application. Please note that this application is for testing purpose only. You can type **menu** anywhere to get to main menu.");
+            await AskLandLordOrTenant(context);*/
         }
 
         private async Task MessageReceivedAsync(IDialogContext context, IAwaitable<object> result)
@@ -65,11 +69,15 @@ namespace BsuBot.Dialogs
         {
             await context.PostWithButtonsAsync("Are you a Landlord or Tenant?", new List<string> { "Landlord", "Tenant" });
             context.Wait(AfterSelectLandlordTenantOption);
+
         }
 
         private async Task AfterSelectLandlordTenantOption(IDialogContext context, IAwaitable<IMessageActivity> result)
         {
+         
+
             var res = await result;
+            
             switch (res.Text)
             {
                
@@ -149,8 +157,7 @@ namespace BsuBot.Dialogs
                     break;
                 case "3) Ask question related to AGI Guideline":
                 case "3":
-                    context.Call(new ExceptionHandlerDialog<object>(_qnaDialog, true),
-                        ResumeAfterQna);
+                   context.Call(new ExceptionHandlerDialog<object>(_qnaDialog, true),ResumeAfterQna);
                     break;
                 default:
                     await context.PostAsync("can't recognize");

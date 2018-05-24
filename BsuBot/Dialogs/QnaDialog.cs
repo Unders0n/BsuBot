@@ -16,6 +16,8 @@ namespace BsuBot.Dialogs
     
     public class QnaDialog : IDialog<object>
     {
+
+        private const string CANT_FIND_TEXT = "I am sorry, I am not able to find an answer for your question.Can you reword your question by providing details and context";
         public QnaDialog()
         {
 
@@ -94,6 +96,8 @@ namespace BsuBot.Dialogs
                 responseString = client.UploadString(builder.Uri, postBody);
             }
             QnAMakerResult result = JsonConvert.DeserializeObject<QnAMakerResult>(responseString);
+            if (result.Answers[0].Answer.Contains("No good match found in KB"))
+                return CANT_FIND_TEXT;
             return result.Answers[0].Answer;
         }
 
