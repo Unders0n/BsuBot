@@ -18,6 +18,8 @@ namespace BsuBot.Dialogs
     {
 
         private const string CANT_FIND_TEXT = "I am sorry, I am not able to find an answer for your question.Can you reword your question by providing details and context";
+        private const string LOW_SCORE_TEXT = "I was not able to find a suitable answer. Please rephrase/reword your question by providing more information";
+
         public QnaDialog()
         {
 
@@ -98,6 +100,8 @@ namespace BsuBot.Dialogs
             QnAMakerResult result = JsonConvert.DeserializeObject<QnAMakerResult>(responseString);
             if (result.Answers[0].Answer.Contains("No good match found in KB"))
                 return CANT_FIND_TEXT;
+            if (result.Answers[0].Score < 50)
+                return LOW_SCORE_TEXT;
             return result.Answers[0].Answer;
         }
 
